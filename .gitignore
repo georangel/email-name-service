@@ -1,0 +1,16 @@
+# Ignore Maven/Gradle build files
+/target/
+/build/
+
+# Ignore IntelliJ IDEA settings
+/.idea/
+/*.iml
+
+# Ignore dependencies
+/.mvn/
+/.gradle/
+/out/
+
+# Ignore logs & temporary files
+*.log
+*.tmp
