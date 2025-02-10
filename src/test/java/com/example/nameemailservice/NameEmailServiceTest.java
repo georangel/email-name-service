@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.Set;
 
 public class NameEmailServiceTest extends AbstractTestNGSpringContextTests {
@@ -55,19 +56,19 @@ public class NameEmailServiceTest extends AbstractTestNGSpringContextTests {
   @DataProvider(name = "processNameData")
   public Object[][] processNameData() {
     return new Object[][]{
-      {"johnsmith", new String[]{"JOHNSMITH"}},
-      {"mariakallas", new String[]{"MARIAKALLAS"}},
-      {"ιωαννης", new String[]{"ΙΩΑΝΝΗΣ"}},
-      {"konstadinos ioannis", new String[]{"KONSTADINOS", "IOANNIS"}},
-      {"john", new String[]{"JOHN"}},
-      {"", new String[]{}},
-      {null, new String[]{}}
+      {"johnsmith", List.of("JOHNSMITH")},
+      {"mariakallas", List.of("MARIAKALLAS")},
+      {"γιωργος", List.of("ΓΙΩΡΓΟΣ")},
+      {"konstadinos giorgos", List.of("KONSTADINOS", "GIORGOS")},
+      {"john", List.of("JOHN")},
+      {"", List.of()},
+      {null, List.of()}
     };
   }
 
   @Test(dataProvider = "processNameData")
-  public void testProcessName(String name, String[] expected) {
-    String[] result = nameEmailService.processName(name);
+  public void testProcessName(String name, List<String> expected) {
+    List<String> result = nameEmailService.processName(name);
     Assert.assertEquals(result, expected);
   }
 

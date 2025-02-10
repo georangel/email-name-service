@@ -1,8 +1,11 @@
 package com.example.nameemailservice;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -61,16 +64,40 @@ public class NameEmailService {
 
   /**
    * Processes a full name by splitting it into individual components and converting them to uppercase.
+   * If the input is null or empty, it returns an empty list.
    *
    * @param name The full name to process.
    *
    * @return An array of processed name parts.
    */
-  public String[] processName(String name) {
-    if (name == null || name.trim().isEmpty()) {
-      return new String[0];
+  public List<String> processName(String name) {
+    if (name == null || name.isBlank()) {
+      return List.of();
     }
-    return name.toUpperCase().split("\\s+");
+    String processedName = replaceCombinationsWithCharacter(name);
+    if (processedName == null || processedName.isBlank()) {
+      return List.of();
+    }
+    return Arrays.stream(processedName.toUpperCase().split("\\s+"))
+      .filter(part -> !part.isBlank())
+      .toList();
+  }
+
+  /**
+   * Replaces specific character combinations that are often written or pronounced differently.
+   * For example, "nt" is replaced with "d", "ch" with "ts", and "mp" with "b".
+   *
+   * @param name The input name string.
+   * @return The transformed name with character combinations replaced.
+   */
+  public String replaceCombinationsWithCharacter(String name) {
+    if (name == null || name.isEmpty()) {
+      return name;
+    }
+
+    return name.replace("nt", "d")
+      .replace("ch", "ts")
+      .replace("mp", "b");
   }
 
   /**
@@ -152,10 +179,10 @@ public class NameEmailService {
       return false; // Prevents processing errors on invalid emails
     }
 
-    String[] processedNames = processName(firstName + " " + lastName);
-    for (int i = 0; i < processedNames.length - 1; i++) {
-      for (int j = i + 1; j < processedNames.length; j++) {
-        if (checkIfCombinationInHandle(processedNames[i], processedNames[j], handle)) {
+    List<String> processedNames = processName(firstName + " " + lastName);
+    for (int i = 0; i < processedNames.size() - 1; i++) {
+      for (int j = i + 1; j < processedNames.size(); j++) {
+        if (checkIfCombinationInHandle(processedNames.get(i), processedNames.get(j), handle)) {
           return true;
         }
       }
